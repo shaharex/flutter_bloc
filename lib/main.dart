@@ -1,18 +1,10 @@
-import 'package:bloc_learning/counter/counter_page.dart';
+import 'package:bloc_learning/app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'simple_bloc_observer.dart';
 
 void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: CounterPage(),
-    );
-  }
+  Bloc.observer = const SimpleBlocObserver();
+  runApp(MyApp());
 }
