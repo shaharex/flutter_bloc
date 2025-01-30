@@ -6,5 +6,5 @@ import 'simple_bloc_observer.dart';
 
 void main() {
   Bloc.observer = const SimpleBlocObserver();
-  runApp(MyApp());
+  runApp(const MyApp());
 }

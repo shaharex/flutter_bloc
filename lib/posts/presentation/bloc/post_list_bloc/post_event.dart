@@ -6,3 +6,5 @@ sealed class PostEvent extends Equatable {
 }
 
 final class PostFetched extends PostEvent {}
+
+final class PostRefreshRequested extends PostEvent {}
