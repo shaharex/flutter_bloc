@@ -1,11 +1,9 @@
 import 'package:bloc_learning/posts/data/datasources/remote_data_sources.dart';
 import 'package:bloc_learning/posts/data/repositories/post_repository_imp.dart';
 import 'package:bloc_learning/posts/domain/usecases/get_posts.dart';
-import 'package:bloc_learning/posts/presentation/bloc/post_list_bloc/post_bloc.dart';
+import 'package:bloc_learning/posts/posts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../widgets/widgets.dart';
 
 class PostsPage extends StatelessWidget {
   const PostsPage({super.key});
@@ -17,6 +15,15 @@ class PostsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Post List"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => PostSearchPage()));
+            },
+            icon: const Icon(Icons.search),
+          ),
+        ],
       ),
       body: BlocProvider(
         create: (_) => PostBloc(
@@ -34,27 +41,32 @@ class PostsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PostBloc, PostState>(
-      builder: (context, state) {
-        switch (state.status) {
-          case PostStatus.failure:
-            return const Center(child: Text('failed to fetch posts'));
-          case PostStatus.success:
-            if (state.posts.isEmpty) {
-              return const Center(child: Text('no posts'));
-            }
-            return ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                return index >= state.posts.length
-                    ? const BottomLoader()
-                    : PostListItem(post: state.posts[index]);
-              },
-              itemCount: state.posts.length,
-            );
-          case PostStatus.initial:
-            return const Center(child: CircularProgressIndicator());
-        }
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<PostBloc>().add(PostRefreshRequested());
       },
+      child: BlocBuilder<PostBloc, PostState>(
+        builder: (context, state) {
+          switch (state.status) {
+            case PostStatus.failure:
+              return const Center(child: Text('failed to fetch posts'));
+            case PostStatus.success:
+              if (state.posts.isEmpty) {
+                return const Center(child: Text('no posts'));
+              }
+              return ListView.builder(
+                itemBuilder: (BuildContext context, int index) {
+                  return index >= state.posts.length
+                      ? const BottomLoader()
+                      : PostListItem(post: state.posts[index]);
+                },
+                itemCount: state.posts.length,
+              );
+            case PostStatus.initial:
+              return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }

@@ -15,8 +15,6 @@ class PostDetailsBloc extends Bloc<PostDetailsEvent, PostDetailsState> {
   }
 
   _onFetchPostById(FetchPostById event, Emitter<PostDetailsState> emit) async {
-    if (state is PostDetailsLoaded) return;
-
     emit(PostDetailsLoading());
 
     try {
